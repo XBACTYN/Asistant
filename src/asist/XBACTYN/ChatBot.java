@@ -6,8 +6,6 @@ public class ChatBot {
 
     private Pattern pattern;
     public Date date;
-    private String [] arr1 = new String []{"новости","погода","посоветуй"};
-    private String [] arr2 = new String []{"игры","аниме","ранобэ","манга"};
 
     final Map<String, String> PATTERNS_FOR_ANALYSIS = new HashMap<String, String>()
     {{
@@ -49,6 +47,16 @@ public class ChatBot {
         put("прощай", "bye");
         put("увидимся", "bye");
         put("до\\s.*свидания", "bye");
+
+
+
+        //put("новост\\s.*4pda","parse4pdanews");
+        //put("новост\\s.*[stopgame|стопгейм]\\s*","parsestopgamenews");
+        put("новости","parsestopgamenews");
+
+
+
+
     }};
     final Map<String, String> ANSWERS_BY_PATTERNS = new HashMap<String, String>()
     {{
@@ -84,11 +92,32 @@ public class ChatBot {
             pattern = Pattern.compile(o.getKey());
             if (pattern.matcher(message).find())
             {
+                if(o.getValue().contains("parse"))
+                {
+                    System.out.println("Хер");
+                    return StartParse(o.getValue());
+                }
                 if (o.getValue().equals("whattime")) return date.toString();
                 else return ANSWERS_BY_PATTERNS.get(o.getValue());
             }
 
         }
         return say;
+    }
+
+    private String StartParse(String key)
+    {
+        String answer = "Посмотри что нашел:\n";
+
+        Parser pars1 = new Parser(key);
+        List<NewsArticle> articl1 = new ArrayList();
+        articl1.addAll(pars1.GetData());
+
+        for(NewsArticle el: articl1)
+        {
+            answer+=el.getTitle()+"\n"+el.getUrl()+"\n\n";
+        }
+
+        return answer;
     }
 }
