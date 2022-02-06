@@ -4,16 +4,16 @@ import java.net.URL;
 
 public class NewsArticle {
 
-    public String url;
+    public URL url;
     public String title;
 
-    public NewsArticle (String url,String title)
+    public NewsArticle (URL url,String title)
     {
         setUrl(url);
         setTitle(title);
     }
 
-    public String getUrl()
+    public URL getUrl()
     {
         return this.url;
     }
@@ -22,7 +22,7 @@ public class NewsArticle {
         return this.title;
     }
 
-    public void setUrl(String url)
+    public void setUrl(URL url)
     {
         this.url = url;
     }

@@ -1,4 +1,8 @@
 package asist.XBACTYN;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.html.HTMLDocument;
+import javax.swing.text.html.HTMLEditorKit;
+import java.io.IOException;
 import java.util.*;
 import java.util.regex.*;
 
@@ -6,8 +10,10 @@ public class ChatBot {
 
     private Pattern pattern;
     public Date date;
+    HTMLDocument htmldoc;
+    HTMLEditorKit editorKit;
 
-    final Map<String, String> PATTERNS_FOR_ANALYSIS = new HashMap<String, String>()
+    final Map<String, String> PATTERNS_FOR_ANALYSIS = new HashMap<>()
     {{
         // hello
         put("хай", "hello");
@@ -73,9 +79,12 @@ public class ChatBot {
     public ChatBot() {
         //random = new Random();
         date = new Date();
+        htmldoc = new HTMLDocument();
+        editorKit = new HTMLEditorKit();
     }
     public String botAnswers(String user_message)
     {
+
         String answer ="Bot:\n>>"+recognizeText(user_message)+"\n\n";
 
 
@@ -87,14 +96,14 @@ public class ChatBot {
         String say="";
         //int type =0;
         String message = String.join(" ", msg.toLowerCase().split("[ {,|.}?]+"));
-        for (Map.Entry<String, String> o : PATTERNS_FOR_ANALYSIS.entrySet())
+        for (var o : PATTERNS_FOR_ANALYSIS.entrySet())
         {
             pattern = Pattern.compile(o.getKey());
             if (pattern.matcher(message).find())
             {
                 if(o.getValue().contains("parse"))
                 {
-                    System.out.println("Хер");
+
                     return StartParse(o.getValue());
                 }
                 if (o.getValue().equals("whattime")) return date.toString();
@@ -113,10 +122,32 @@ public class ChatBot {
         List<NewsArticle> articl1 = new ArrayList();
         articl1.addAll(pars1.GetData());
 
+
+        try {
+            for(NewsArticle el: articl1) {
+                editorKit.insertHTML(htmldoc, htmldoc.getLength(), "<a href=\""+el.getUrl()+"\">"+el.getTitle()+"</a>", 0, 0, null);
+            }
+
+        }
+        catch (BadLocationException e)
+        {
+            e.printStackTrace();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+
+
+
+
+
+/*
         for(NewsArticle el: articl1)
         {
             answer+=el.getTitle()+"\n"+el.getUrl()+"\n\n";
         }
+*/
 
         return answer;
     }
