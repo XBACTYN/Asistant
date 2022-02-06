@@ -8,6 +8,10 @@ import javax.swing.event.HyperlinkListener;
 import javax.swing.text.*;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
+import java.awt.Desktop;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 public class DialogForm extends JFrame implements ActionListener{
 
@@ -48,9 +52,20 @@ public class DialogForm extends JFrame implements ActionListener{
 
                 if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
                     System.out.println(e.getSourceElement());
-                    if (e.getURL() != null) {
-                        System.out.println(e.getURL());//тест
-                        //НАПИСАТЬ КУСОК В КОТОРОМ ИСПОЛЬЗУЕМ БРАУЗЕР ПО УМОЛЧАНИЮ И ОТКРЫВАЕМ
+                    if (e.getURL() != null)
+                    {
+
+                        if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE))
+                        {
+                            try
+                            {
+                                Desktop.getDesktop().browse(new URI(e.getURL().toString()));
+                            } catch (IOException ex) {
+                                ex.printStackTrace();
+                            } catch (URISyntaxException ex) {
+                                ex.printStackTrace();
+                            }
+                        }
                     }
                     else
                         System.out.println(e.getDescription());
@@ -108,16 +123,5 @@ public class DialogForm extends JFrame implements ActionListener{
 
     }
 
-    public void hyperlinkUpdate(HyperlinkEvent e) {
-
-        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-            System.out.println(e.getSourceElement());
-            if (e.getURL() != null)
-                System.out.println(e.getURL());
-            else
-                System.out.println(e.getDescription());
-            System.out.println("-----");
-        }
-    }
 
 }
